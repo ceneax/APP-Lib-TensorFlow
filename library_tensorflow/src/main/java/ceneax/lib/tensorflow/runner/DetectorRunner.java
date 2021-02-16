@@ -191,6 +191,10 @@ public class DetectorRunner implements IRunner<ArrayList<Recognition>> {
             this.numDetections = numDetections;
             return this;
         }
+
+        public DetectorRunner build() {
+            return new DetectorRunner(this);
+        }
     }
 
 }
