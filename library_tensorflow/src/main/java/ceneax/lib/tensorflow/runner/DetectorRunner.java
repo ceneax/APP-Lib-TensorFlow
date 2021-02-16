@@ -115,11 +115,20 @@ public class DetectorRunner implements IRunner<ArrayList<Recognition>> {
         // 转换结果，并返回
         final ArrayList<Recognition> recognitions = new ArrayList<>(numDetectionsOutput);
         for (int i = 0; i < numDetectionsOutput; ++i) {
+            // 过滤无效值
+            if (outputScores[0][i] < mBuilder.filterValue) {
+                continue;
+            }
+
             final RectF detection = new RectF(
                     outputLocations[0][i][1] * mBuilder.inputWidth,
                     outputLocations[0][i][0] * mBuilder.inputWidth,
                     outputLocations[0][i][3] * mBuilder.inputWidth,
                     outputLocations[0][i][2] * mBuilder.inputWidth);
+
+            // 转换坐标
+            frameToCropTransform.mapRect(detection);
+            mMatrix.mapRect(detection);
 
             recognitions.add(new Recognition((int) outputClasses[0][i], "", outputScores[0][i], detection));
         }
@@ -163,6 +172,8 @@ public class DetectorRunner implements IRunner<ArrayList<Recognition>> {
         private boolean modelQuantized = true;
         // 每次要检测的最大数量
         private int numDetections = 10;
+        // 过滤值，默认0.5
+        private float filterValue = 0.5f;
 
         public Builder() {}
 
@@ -189,6 +200,11 @@ public class DetectorRunner implements IRunner<ArrayList<Recognition>> {
 
         public Builder setNumDetections(int numDetections) {
             this.numDetections = numDetections;
+            return this;
+        }
+
+        public Builder setFilterValue(float filterValue) {
+            this.filterValue = filterValue;
             return this;
         }
 
