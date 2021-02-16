@@ -127,7 +127,7 @@ public class DetectorRunner implements IRunner<ArrayList<Recognition>> {
                     outputLocations[0][i][2] * mBuilder.inputWidth);
 
             // 转换坐标
-            frameToCropTransform.mapRect(detection);
+            cropToFrameTrans.mapRect(detection);
             mMatrix.mapRect(detection);
 
             recognitions.add(new Recognition((int) outputClasses[0][i], "", outputScores[0][i], detection));
